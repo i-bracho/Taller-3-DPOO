@@ -38,7 +38,7 @@ public class GeneradorTiquetes
         while( codigo.length( ) < 7 )
             codigo = "0" + codigo;
 
-        return new Tiquete( codigo, vuelo, cliente, tarifa );
+        return new Tiquete( codigo, tarifa, cliente, vuelo );
     }
 
     /**
