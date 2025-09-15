@@ -2,6 +2,7 @@ package uniandes.dpoo.aerolinea.modelo.tarifas;
 
 import uniandes.dpoo.aerolinea.modelo.Vuelo;
 import uniandes.dpoo.aerolinea.modelo.cliente.Cliente;
+import uniandes.dpoo.aerolinea.modelo.cliente.ClienteCorporativo;
 
 public class CalculadoraTarifasTemporadaBaja extends CalculadoraTarifas {
 	
@@ -13,13 +14,12 @@ public class CalculadoraTarifasTemporadaBaja extends CalculadoraTarifas {
 
 	public CalculadoraTarifasTemporadaBaja(Cliente cliente, Vuelo vuelo) {
 		super(cliente, vuelo);
-		// TODO Auto-generated constructor stub
 	}
 
 	@Override
 	protected int calcularCostoBase(Vuelo vuelo, Cliente cliente) {
         int distancia = calcularDistanciaVuelo(vuelo.getRuta());
-        if (cliente.esCorporativo()) {
+        if (cliente.getTipoCliente().equalsIgnoreCase(ClienteCorporativo.CORPORATIVO)) {
             return distancia * COSTO_POR_KM_CORPORATIVO;
         } else {
             return distancia * COSTO_POR_KM_NATURAL;
@@ -28,20 +28,19 @@ public class CalculadoraTarifasTemporadaBaja extends CalculadoraTarifas {
 
 	@Override
 	protected double calcularPorcentajeDescuento(Cliente cliente) {
-		 protected double calcularPorcentajeDescuento(Cliente cliente) {
-		        if (cliente.esCorporativo()) {
-		            int numEmpleados = cliente.getNumeroEmpleados();
-		            if (numEmpleados < 10) return DESCUENTO_PEQ;
-		            else if (numEmpleados < 50) return DESCUENTO_MEDIANAS;
-		            else return DESCUENTO_GRANDES;
-		        }
-		        return 0.0;
-		    }
-
-	@Override
-	protected int calcularValorImpuestos(int costoBase) {
-		// TODO Auto-generated method stub
-		return 0;
+	    if (cliente.getTipoCliente().equalsIgnoreCase(ClienteCorporativo.CORPORATIVO)) {
+	        ClienteCorporativo corp = (ClienteCorporativo) cliente;
+	        switch (corp.getTamanoEmpresa()) {
+	            case ClienteCorporativo.PEQUENA:
+	                return DESCUENTO_PEQ;
+	            case ClienteCorporativo.MEDIANA:
+	                return DESCUENTO_MEDIANAS;
+	            case ClienteCorporativo.GRANDE:
+	                return DESCUENTO_GRANDES;
+	        }
+	    }
+	    return 0.0;
 	}
+	
 
 }
